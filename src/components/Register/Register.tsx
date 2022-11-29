@@ -1,14 +1,41 @@
+import React from "react";
 import { Link } from "react-router-dom";
+import * as authService from '../services/authServices'
 
 import './Register.css'
 
+
+
+
 export default function Register() {
+
+
+
+    const registerSubmitHandler = async (event: React.FormEvent) => {
+        event.preventDefault()
+
+        const id = (Math.random()).toString(16).slice(2);
+        const timeCreated = new Date().toJSON().split('.')[0];
+        let timeData = timeCreated.split('T')[0];
+        const timeH = timeCreated.split('T')[1];
+        timeData = timeData.split('-').reverse().join('-');
+        const currentDataCreated = timeH + ' / ' + timeData;
+
+        let form = Object.fromEntries(new FormData(event.target as HTMLFormElement))
+        form.id = id
+
+        form.timeCreated = currentDataCreated
+        
+
+        const response = await authService.login(form)
+        console.log(response)
+    }
 
 
     return (
         <section className='section-form-regiser'>
             <h3>Register Form</h3>
-            <form action="" className='form-register'>
+            <form method="POST" onSubmit={registerSubmitHandler} className='form-register'>
                 <span className='span-register'>
                     <label htmlFor="firstName">First Name : </label>
                     <input type="text" name='firsName' />
@@ -61,7 +88,7 @@ export default function Register() {
                 </span>
                 <div className="buttons-register">
                     <input className='button-register' type="submit" value={'Sign Up'} />
-                    <small className="text-muted"><Link to="/login">Already Have An Account?</Link></small>
+                    <small className="text-muted"><Link className="link-register" to="/login">Already Have An Account?</Link></small>
                 </div>
             </form>
 

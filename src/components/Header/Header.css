@@ -2,9 +2,19 @@
     display: flex;
     flex-direction: row;
     justify-content: space-evenly;
+    width: 100%; 
+    background-color: black;
+    color: white;
+
 }
 
 li {
+    margin: 15px 30px;
     list-style: none;
     cursor: pointer;
 }
+
+a.header-li{
+    text-decoration: none;
+    color: white;
+  }

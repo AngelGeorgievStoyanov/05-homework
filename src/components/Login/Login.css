@@ -24,7 +24,8 @@
     margin-top: 25px;
 }
 
-a:link {
+a.link-register {
 
     text-decoration: none;
+    color: black;
 }

@@ -24,19 +24,25 @@
 }
 
 
+select {
+    cursor: pointer;
+
+}
+
 
 .button-register {
     cursor: pointer;
     width: 80px;
     margin: 10px 10px;
-    
     align-items: center;
 }
 
-a:link {
-
+a.link-register {
     text-decoration: none;
+    color: black;
 }
+
+
 
 .buttons-register {
     margin: auto;
