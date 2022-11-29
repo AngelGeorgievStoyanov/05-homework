@@ -1,0 +1,46 @@
+.section-form-regiser {
+    display: flex;
+    flex-direction: column;
+    width: 440px;
+    height: 560px;
+    border: solid 2px;
+    border-radius: 10px;
+}
+
+.form-register {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+
+
+
+
+.span-register {
+    margin: 7px 7px;
+    margin-right: 60px;
+    max-width: 470px;
+}
+
+
+
+.button-register {
+    cursor: pointer;
+    width: 80px;
+    margin: 10px 10px;
+    
+    align-items: center;
+}
+
+a:link {
+
+    text-decoration: none;
+}
+
+.buttons-register {
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
