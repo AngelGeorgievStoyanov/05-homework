@@ -14,7 +14,6 @@ export default function Register() {
     const registerSubmitHandler = async (event: React.FormEvent) => {
         event.preventDefault()
 
-        const id = (Math.random()).toString(16).slice(2);
         const timeCreated = new Date().toJSON().split('.')[0];
         let timeData = timeCreated.split('T')[0];
         const timeH = timeCreated.split('T')[1];
@@ -22,12 +21,11 @@ export default function Register() {
         const currentDataCreated = timeH + ' / ' + timeData;
 
         let form = Object.fromEntries(new FormData(event.target as HTMLFormElement))
-        form.id = id
 
         form.timeCreated = currentDataCreated
         
 
-        const response = await authService.login(form)
+        const response = await authService.register(form)
         console.log(response)
     }
 
