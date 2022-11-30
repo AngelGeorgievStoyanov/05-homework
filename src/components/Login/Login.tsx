@@ -1,6 +1,7 @@
 import React from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import * as authService from '../services/authServices'
+import {loginUser} from '../userLocalStorage/userLocalStorage'
 
 import './Login.css'
 
@@ -24,6 +25,8 @@ export default function Login() {
             })
 
         if (response[0].username === username && response[0].password === password) {
+
+            loginUser(response[0].username,{username:response[0].username,id:response[0].id})
             navigate('/')
         }
 
