@@ -24,17 +24,31 @@ export const register = async (data: any) => {
 export const login = async (username: string, password: string) => {
     const response = await fetch(`${apiJson}/?username=${username}`)
 
- const result= await response.json()
+    const result = await response.json()
 
- if (result[0].password===password){
-     return result
 
- }else{
-    throw new Error('Username or Password dont match')
- }
+    if (result.length === 0) {
+        throw new Error('Username or Password dont match')
 
-   
+    }
+
+    if (result[0].password === password && result[0].username === username) {
+        return result
+
+    } else {
+        throw new Error('Username or Password dont match')
+    }
+
+
 }
 
+
+export const getAllUsers = async () => {
+
+    const response = await fetch(`${apiJson}`)
+    const result = await  response.json()
+    console.log(result)
+    return  result
+}
 
 

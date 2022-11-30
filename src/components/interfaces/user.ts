@@ -1,5 +1,6 @@
 
 
+
 export interface User{
     id:string;
     firstName:string;
@@ -12,4 +13,12 @@ export interface User{
     description?:string;
     timeCreated:string;
     timeEdited?:string
+    key?:string
 }
+
+
+export interface UsersProps{
+    users: User[];
+ }
+
+
