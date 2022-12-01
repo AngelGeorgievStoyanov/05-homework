@@ -13,12 +13,12 @@ export const ListUsers: FC<UsersProps> = (
 ) => {
 
     return (
-        <section>
+        <>
             {users.length > 0 ?
-                <div>
+                <>
                     {users.map(x => <CardUser key={x.id} user={x} />)}
-                </div> : ''}
-        </section>
+                </> : ''}
+        </>
     )
 }
 

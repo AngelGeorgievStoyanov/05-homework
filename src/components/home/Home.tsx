@@ -1,33 +1,22 @@
-import { FC, useEffect, useState } from "react"
-import { User } from "../interfaces/user"
-import {ListUsers} from "../ListUsers/ListUsers"
-import * as authServices from '../services/authServices'
+import { useEffect } from "react"
+import { useNavigate } from "react-router-dom"
+import { getUser } from "../userLocalStorage/userLocalStorage"
 
 
-export const  Home :FC = () => {
 
-    const [users, setUsers] = useState<User[]>([])
+export default function Home() {
 
-
+    const user = getUser()
+  
+    const navigate = useNavigate()
     useEffect(() => {
+        if (!user) {
+           
+            return   navigate('/login')
+        } 
 
-
-        authServices.getAllUsers()
-            .then(result => {
-                setUsers(result)
-            }).catch(err => {
-                console.log(err)
-            })
-
-      
-    }, [])
-
-
+    })
     return (
-        <div className="div-home">
-            <ListUsers users={users} />
-        </div>
+        <h1>Welcome {user}!</h1>
     )
 }
-
-

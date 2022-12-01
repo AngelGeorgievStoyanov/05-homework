@@ -1,6 +1,7 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import * as authService from '../services/authServices'
+import { loginUser } from "../userLocalStorage/userLocalStorage";
 
 import './Register.css'
 
@@ -9,7 +10,7 @@ import './Register.css'
 
 export default function Register() {
 
-
+    const navigate = useNavigate()
 
     const registerSubmitHandler = async (event: React.FormEvent) => {
         event.preventDefault()
@@ -23,10 +24,22 @@ export default function Register() {
         let form = Object.fromEntries(new FormData(event.target as HTMLFormElement))
 
         form.timeCreated = currentDataCreated
-        
+        if (form.username === '' || form.firstName === '' || form.lastName === '' || form.password === '' || form.rePass === '') {
+            throw new Error('Username is required, First Name is required, Last Name is required, Password is required, Confirm Password is required')
+        }
+        if (form.password !== '' && form.rePass !== '') {
+            if (form.password !== form.rePass) {
+                throw new Error('Password and Confirm Password don\'t match')
+            }
+        }
 
         const response = await authService.register(form)
-        console.log(response)
+
+        if (response.id) {
+            loginUser(response.username, { username: response.username, id: response.id, firstName: response.firstName })
+            navigate('/')
+        }
+
     }
 
 
@@ -36,7 +49,7 @@ export default function Register() {
             <form method="POST" onSubmit={registerSubmitHandler} className='form-register'>
                 <span className='span-register'>
                     <label htmlFor="firstName">First Name : </label>
-                    <input type="text" name='firsName' />
+                    <input type="text" name='firstName' />
                 </span>
 
                 <span className='span-register'>

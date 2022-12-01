@@ -1,29 +1,5 @@
-import { User } from "../interfaces/user"
 
-const initialValue ={
-    username:'',
-    id:''
-}
-
-
-
-// export const userLocalStorage = (key, initialValue) => {
-
-
-
-//     try {
-//         let item = localStorage.getItem(key)
-
-//         return item ? JSON.parse(item) : initialValue
-//     } catch (error) {
-
-//         console.log(error)
-//         return initialValue
-
-//     }
-// }
-
-export const setItemLocalStorage = (key:string, value:{}) => {
+export const setItemLocalStorage = (key: string, value: {}) => {
     try {
         localStorage.setItem(key, JSON.stringify(value))
     } catch (error) {
@@ -32,7 +8,21 @@ export const setItemLocalStorage = (key:string, value:{}) => {
 }
 
 
-export const loginUser = (id:string,data:{})=>{
-    console.log(id,data)
-    setItemLocalStorage(id,data)
+export const loginUser = (id: string, data: {}) => {
+    try {
+        return setItemLocalStorage(id, data)
+    } catch (error) {
+        console.log(error)
+    }
 }
+
+export const getUser = () => {
+    try {
+        return localStorage.key(0)
+    } catch (error) {
+        console.log(error)
+    }
+
+}
+
+

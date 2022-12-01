@@ -1,7 +1,7 @@
 import React from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import * as authService from '../services/authServices'
-import {loginUser} from '../userLocalStorage/userLocalStorage'
+import { loginUser } from '../userLocalStorage/userLocalStorage'
 
 import './Login.css'
 
@@ -15,7 +15,7 @@ export default function Login() {
 
         const username = form.username as string
         const password = form.password as any as string
-        console.log(username, password)
+
 
 
         const response = await authService.login(username, password)
@@ -25,8 +25,7 @@ export default function Login() {
             })
 
         if (response[0].username === username && response[0].password === password) {
-
-            loginUser(response[0].username,{username:response[0].username,id:response[0].id})
+            loginUser(response[0].username, { username: response[0].username, id: response[0].id, firstName: response[0].firstName })
             navigate('/')
         }
 
