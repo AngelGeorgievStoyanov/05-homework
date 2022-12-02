@@ -36,7 +36,7 @@ export default function Register() {
         const response = await authService.register(form)
 
         if (response.id) {
-            loginUser(response.username, { username: response.username, id: response.id, firstName: response.firstName })
+            loginUser(response.id, { username: response.username, id: response.id, firstName: response.firstName })
             navigate('/')
         }
 
@@ -74,7 +74,7 @@ export default function Register() {
 
                 <span className='span-register'>
                     <label htmlFor="gender">Gender : </label>
-                    <select name='select-gender'  >
+                    <select name='gender'  >
                         <option value="MALE">MALE</option>
                         <option value="FEMALE">FEMALE</option>
                     </select>
@@ -82,7 +82,7 @@ export default function Register() {
 
                 <span className='span-register'>
                     <label htmlFor="select-role">Role : </label>
-                    <select name='select-role'  >
+                    <select name='role'  >
                         <option value="USER">USER</option>
                         <option value="ADMIN">ADMIN</option>
                     </select>

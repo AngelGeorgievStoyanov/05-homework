@@ -6,17 +6,20 @@ import * as authServices from '../services/authServices'
 import { getUser } from "../userLocalStorage/userLocalStorage"
 import './AllUsers.css'
 
+
 function AllUsers() {
 
+    const id = getUser()
     const [users, setUsers] = useState<User[]>([])
-    const user = getUser()
+
+   
   
     const navigate = useNavigate()
   
 
     useEffect(() => {
         
-        if(!user){
+        if(!id){
            return navigate('/login')
             
         }
@@ -24,17 +27,21 @@ function AllUsers() {
         authServices.getAllUsers()
             .then(result => {
                 setUsers(result)
+               
             }).catch(err => {
                 console.log(err)
             })
 
+          
 
-    }, [navigate, user])
 
+    }, [id, navigate])
+
+    
 
     return (
         <div className="div-all-users">
-            <ListUsers users={users} />
+            <ListUsers users={users}  />
         </div>
     )
 }

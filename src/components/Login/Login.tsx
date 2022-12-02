@@ -25,7 +25,7 @@ export default function Login() {
             })
 
         if (response[0].username === username && response[0].password === password) {
-            loginUser(response[0].username, { username: response[0].username, id: response[0].id, firstName: response[0].firstName })
+            loginUser(response[0].id, { username: response[0].username, id: response[0].id, firstName: response[0].firstName })
             navigate('/')
         }
 

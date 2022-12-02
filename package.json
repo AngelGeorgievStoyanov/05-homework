@@ -18,7 +18,7 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "api": "json-server db.json --routes routes.json --port=3000",
+    "api": "json-server --watch db.json --routes routes.json --port 9000",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",

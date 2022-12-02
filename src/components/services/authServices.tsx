@@ -1,6 +1,6 @@
 
 
-const apiJson = 'http://localhost:3000/posts'
+const apiJson = 'http://localhost:9000/users'
 
 
 
@@ -49,6 +49,17 @@ export const getAllUsers = async () => {
     const result = await  response.json()
     console.log(result)
     return  result
+}
+
+
+export const userInfo = async(id:string)=>{
+
+
+    const response = await fetch(`${apiJson}/?id=${id}`)
+    const result = await  response.json()
+   
+    return  result
+    
 }
 
 

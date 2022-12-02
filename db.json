@@ -1,0 +1,46 @@
+{
+  "todos": [
+    {
+      "id": 1,
+      "text": "Lifecycle Methods are working!",
+      "status": 1
+    }
+  ],
+  "users": [
+    {
+      "id": 1,
+      "firstName": "Default",
+      "lastName": "Admin",
+      "username": "admin",
+      "password": "admin123",
+      "role": 2,
+      "imageUrl": "https://avatars.githubusercontent.com/u/8014435?v=4"
+    },
+    {
+      "firstName": "Angel",
+      "lastName": "Stoyanov",
+      "username": "angelo",
+      "password": "123",
+      "rePass": "123",
+      "gender": "MALE",
+      "role": "ADMIN",
+      "imageUrl": "",
+      "description": "Admin",
+      "timeCreated": "08:45:10 / 02-12-2022",
+      "id": 2
+    },
+    {
+      "firstName": "Sneji",
+      "lastName": "Stoyanova",
+      "username": "Pamela",
+      "password": "123",
+      "rePass": "123",
+      "gender": "FEMALE",
+      "role": "USER",
+      "imageUrl": "",
+      "description": "hthyh",
+      "timeCreated": "10:09:03 / 02-12-2022",
+      "id": 3
+    }
+  ]
+}
