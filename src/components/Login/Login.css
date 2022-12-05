@@ -29,3 +29,10 @@ a.link-register {
     text-decoration: none;
     color: black;
 }
+.button-go-to-register{
+    margin: 15px 10px;
+}
+
+.login-h3{
+    margin: 15px auto;
+}

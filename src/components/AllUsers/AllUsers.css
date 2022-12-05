@@ -1,4 +1,17 @@
-.div-all-users{
+.div-all-users {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.main{
     display: flex;
     flex-wrap: wrap;
+}
+
+
+.div-exit{
+    display: flex;    
+    justify-content: center;
+    margin: 20px 20px;
 }

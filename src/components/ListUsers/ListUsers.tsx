@@ -1,26 +1,29 @@
-import { FC } from "react";
-import  {CardUser}  from "../CardUser/CardUser";
-import { User } from "../interfaces/user";
+
+import CardUser from "../CardUser/CardUser";
+import { User } from "../model/users";
+import {  UserUpdateListener } from "../shared/common-types";
 
 
 
 type UsersProps = {
     users: User[]
+    owner: User;
+    onEditedUser:UserUpdateListener;
+    admin:2|undefined
+  
 }
 
-export const ListUsers: FC<UsersProps> = (
-    { users }
-) => {
+function ListUsers({ users, ...rest}: UsersProps) {
 
     return (
         <>
-            {users.length > 0 ?
-                <>
-                    {users.map(x => <CardUser key={x.id} user={x} />)}
-                </> : ''}
+
+
+            {users.map(x => <CardUser key={x.id} user={x}  {...rest}/>)}
+
         </>
     )
 }
 
-
+export default ListUsers
 

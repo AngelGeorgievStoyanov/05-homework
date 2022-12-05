@@ -50,3 +50,8 @@ a.link-register {
     flex-direction: column;
     align-items: center;
 }
+.register-div{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}

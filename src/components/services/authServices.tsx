@@ -1,28 +1,90 @@
+import { Identifiable } from "../shared/common-types";
 
 
-const apiJson = 'http://localhost:9000/users'
+const apiJson = `http://localhost:4000/api`;
 
 
-
-
-
-export const register = async (data: any) => {
-    const response = await fetch(`${apiJson}`, {
-        method: 'POST',
-        headers: {
-            "content-type": "application/json"
-        },
-        body: JSON.stringify(data)
-    });
-    const result = await response.json();
-    return result;
-
+export interface ApiClient<K, V extends Identifiable<K>> {
+    findAll(): Promise<V[]>;
+    findById(id: K): Promise<V>;
+    create(entityWithoutId: Omit<V, 'id'>): Promise<V>;
+    update(entity: V): Promise<V>;
+    deleteById(id: K): Promise<void>;
+    register(entityWithoutId: Omit<V, 'id'>): Promise<V>
 }
 
 
 
-export const login = async (username: string, password: string) => {
-    const response = await fetch(`${apiJson}/?username=${username}`)
+
+export class ApiClientImpl<K, V extends Identifiable<K>> implements ApiClient<K, V> {
+    constructor(public apiCollectionSuffix: string) { }
+    findAll(): Promise<V[]> {
+        return this.handleJsonRequest<V[]>(`${apiJson}/${this.apiCollectionSuffix}`);
+    }
+    findById(id: K): Promise<V> {
+        return this.handleJsonRequest<V>(`${apiJson}/${this.apiCollectionSuffix}/${id}`);
+    }
+    create(entityWithoutId: Omit<V, 'id'>): Promise<V> {
+
+        return this.handleJsonRequest<V>(`${apiJson}/${this.apiCollectionSuffix}`, {
+            method: 'POST',
+            headers: {
+                'content-type': 'application/json'
+            },
+            body: JSON.stringify(entityWithoutId)
+        });
+    }
+    update(entity: V): Promise<V> {
+        return this.handleJsonRequest<V>(`${apiJson}/${this.apiCollectionSuffix}/${entity.id}`, {
+            method: 'PUT',
+            headers: {
+                'content-type': 'application/json'
+            },
+            body: JSON.stringify(entity)
+        });
+    }
+    async deleteById(id: K): Promise<void> {
+        await this.handleJsonRequest<V>(`${apiJson}/${this.apiCollectionSuffix}/${id}`, {
+            method: 'DELETE',
+        });
+    }
+
+
+
+    async register(entityWithoutId: Omit<V, 'id'>): Promise<V> {
+       
+        return this.handleJsonRequest<V>(`${apiJson}/${this.apiCollectionSuffix}`, {
+            method: 'POST',
+            headers: {
+                "content-type": "application/json"
+            },
+            body: JSON.stringify(entityWithoutId)
+        })
+    }
+
+    private async handleJsonRequest<V>(url: string, options?: RequestInit): Promise<V> {
+        try {
+            const postsResp = await fetch(url, options);
+            if (postsResp.status >= 400) {
+                return Promise.reject(postsResp.body);
+            }
+            return postsResp.json() as Promise<V>;
+        } catch (err) {
+            return Promise.reject(err);
+        }
+    }
+}
+
+
+
+
+
+
+export const login1 = async (username: string, password: string) => {
+    if (username === '' || password === '') {
+        throw new Error('All fields is required')
+    }
+    const response = await fetch(`${apiJson}/users?username=${username}`)
 
     const result = await response.json()
 
@@ -42,24 +104,5 @@ export const login = async (username: string, password: string) => {
 
 }
 
-
-export const getAllUsers = async () => {
-
-    const response = await fetch(`${apiJson}`)
-    const result = await  response.json()
-    console.log(result)
-    return  result
-}
-
-
-export const userInfo = async(id:string)=>{
-
-
-    const response = await fetch(`${apiJson}/?id=${id}`)
-    const result = await  response.json()
-   
-    return  result
-    
-}
 
 
