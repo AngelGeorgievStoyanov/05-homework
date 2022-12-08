@@ -2,6 +2,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    margin-top: 60px;
 }
 
 .main{
@@ -14,4 +15,10 @@
     display: flex;    
     justify-content: center;
     margin: 20px 20px;
+}
+
+
+.welcome{
+    display: flex;    
+    justify-content: center;
 }

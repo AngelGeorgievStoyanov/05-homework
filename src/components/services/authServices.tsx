@@ -1,6 +1,8 @@
 import { Identifiable } from "../shared/common-types";
 
-
+import { entityWithoutId } from '../interfaces/interfaces'
+import { User, UserRegister } from "../model/users";
+import { type } from "@testing-library/user-event/dist/type";
 const apiJson = `http://localhost:4000/api`;
 
 
@@ -10,14 +12,22 @@ export interface ApiClient<K, V extends Identifiable<K>> {
     create(entityWithoutId: Omit<V, 'id'>): Promise<V>;
     update(entity: V): Promise<V>;
     deleteById(id: K): Promise<void>;
-    register(entityWithoutId: Omit<V, 'id'>): Promise<V>
+    register(entityWithoutId: UserRegister): Promise<V>
+    findByUsername(username: any): any;
 }
-
 
 
 
 export class ApiClientImpl<K, V extends Identifiable<K>> implements ApiClient<K, V> {
     constructor(public apiCollectionSuffix: string) { }
+    async findByUsername(username: any) {
+
+        const exsisting = await this.handleJsonRequest<any>(`${apiJson}/${this.apiCollectionSuffix}/?username=${username}`);
+        if (exsisting.length > 0) {
+            throw new Error('Username is taken')
+        }
+
+    }
     findAll(): Promise<V[]> {
         return this.handleJsonRequest<V[]>(`${apiJson}/${this.apiCollectionSuffix}`);
     }
@@ -51,8 +61,29 @@ export class ApiClientImpl<K, V extends Identifiable<K>> implements ApiClient<K,
 
 
 
-    async register(entityWithoutId: Omit<V, 'id'>): Promise<V> {
-       
+    async register(entityWithoutId: UserRegister): Promise<V> {
+
+        if (entityWithoutId.firstName === '') {
+            throw new Error('First Name is required')
+        }
+        if (entityWithoutId.lastName === '') {
+            throw new Error('Last Name is required')
+        }
+        if (entityWithoutId.username === '') {
+            throw new Error('Username is required')
+        }
+        if (entityWithoutId.password === '') {
+            throw new Error('Password is required')
+        }
+        if (entityWithoutId.rePass === '') {
+            throw new Error('Confirm Password is required')
+        }
+
+        if (entityWithoutId.password !== entityWithoutId.rePass) {
+            throw new Error('Password and Confirm Password don\'t match')
+        }
+
+
         return this.handleJsonRequest<V>(`${apiJson}/${this.apiCollectionSuffix}`, {
             method: 'POST',
             headers: {

@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { User, UserGender, UserRegister, UserRole } from "../model/users";
+import { User, UserGender, UserRegister, UserRole, UserStatus } from "../model/users";
 import { Optional, UserListener } from "../shared/common-types";
 import { toIsoDate } from "../shared/utils";
 
@@ -9,9 +9,9 @@ interface UserProps {
     user: Optional<User>
     onRegister: UserListener;
     onTogle: React.MouseEventHandler<HTMLButtonElement>
-    mainHid: any
- 
-    
+    admin: 2 | undefined | boolean
+
+
 }
 
 interface UserRegisterState {
@@ -27,6 +27,7 @@ interface UserRegisterState {
     description?: string;
     timeCreated: string;
     timeEdited?: string;
+    status: string;
 }
 
 
@@ -42,66 +43,72 @@ export default class Register extends Component<UserProps, UserRegisterState> {
         role: this.props.user?.role.toString() || '1',
         imageUrl: this.props.user?.imageUrl || '',
         description: this.props.user?.description || '',
-        timeCreated: this.props.user?.timeCreated || ''
+        timeCreated: this.props.user?.timeCreated || '',
+        timeEdited: this.props.user?.timeEdited || '',
+        status: this.props.user?.status.toString() || '1'
     };
 
 
     registerSubmitHandler = (event: React.FormEvent | Event) => {
         event.preventDefault()
-  
-
-            if (this.state.firstName === '') {
-                throw new Error('First Name is required')
-            }
-            if (this.state.lastName === '') {
-                throw new Error('Last Name is required')
-            }
-            if (this.state.username === '') {
-                throw new Error('Username is required')
-            }
-            if (this.state.password === '') {
-                throw new Error('Password is required')
-            }
-            if (this.state.rePass === '') {
-                throw new Error('Confirm Password is required')
-            }
-
-            if (this.state.password !== this.state.rePass) {
-                throw new Error('Password and Confirm Password don\'t match')
-            }
 
 
-            this.props.mainHid(event)
+        // if (this.state.firstName === '') {
+        //     throw new Error('First Name is required')
+        // }
+        // if (this.state.lastName === '') {
+        //     throw new Error('Last Name is required')
+        // }
+        // if (this.state.username === '') {
+        //     throw new Error('Username is required')
+        // }
+        // if (this.state.password === '') {
+        //     throw new Error('Password is required')
+        // }
+        // if (this.state.rePass === '') {
+        //     throw new Error('Confirm Password is required')
+        // }
 
-            this.props.onRegister(
-                this.props.user?.id ?
-                    new User(
-                        this.props.user.id,
-                        this.state.firstName,
-                        this.state.lastName,
-                        this.state.username,
-                        this.state.password,
-                        this.state.rePass,
-                        parseInt(this.state.gender),
-                        parseInt(this.state.role),
-                        this.state.imageUrl,
-                        this.state.description,
-                        toIsoDate(new Date())
-                    ) :
-                    new UserRegister(
-                        this.state.firstName,
-                        this.state.lastName,
-                        this.state.username,
-                        this.state.password,
-                        this.state.rePass,
-                        parseInt(this.state.gender),
-                        parseInt(this.state.role),
-                        this.state.imageUrl,
-                        this.state.description,
-                        toIsoDate(new Date())
-                    )
+        // if (this.state.password !== this.state.rePass) {
+        //     throw new Error('Password and Confirm Password don\'t match')
+        // }
 
-            )
+
+        // this.props.mainHid(event)
+
+        this.props.onRegister(
+            this.props.user?.id ?
+                new User(
+                    this.props.user.id,
+                    this.state.firstName,
+                    this.state.lastName,
+                    this.props.user.username,
+                    this.state.password,
+                    this.state.rePass,
+                    parseInt(this.state.gender),
+                    parseInt(this.state.role),
+                    this.state.imageUrl,
+                    this.state.description,
+                    this.state.timeCreated,
+                    toIsoDate(new Date()),
+                    parseInt(this.state.status)
+
+                ) :
+                new UserRegister(
+                    this.state.firstName,
+                    this.state.lastName,
+                    this.state.username,
+                    this.state.password,
+                    this.state.rePass,
+                    parseInt(this.state.gender),
+                    parseInt(this.state.role),
+                    this.state.imageUrl,
+                    this.state.description,
+                    toIsoDate(new Date()),
+
+                )
+
+        )
 
     }
     handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -129,7 +136,8 @@ export default class Register extends Component<UserProps, UserRegisterState> {
 
                     <span className='span-register'>
                         <label htmlFor="username">Username : </label>
-                        <input type="text" name='username' minLength={5} maxLength={15} value={this.state.username} onChange={this.handleChange} />
+                        {this.props.user ? <input type="text" name='username' minLength={5} maxLength={15} disabled value={this.state.username} onChange={this.handleChange} />
+                            : <input type="text" name='username' minLength={5} maxLength={15} value={this.state.username} onChange={this.handleChange} />}
                     </span>
 
                     <span className='span-register'>
@@ -156,6 +164,19 @@ export default class Register extends Component<UserProps, UserRegisterState> {
                             <option value={UserRole.USER}>USER</option>
                             <option value={UserRole.ADMIN}>ADMIN</option>
                         </select>
+                    </span>
+                    <span className='span-register'>
+                        {this.props.admin === true ?
+                            <>
+                                <label htmlFor="status">Status : </label>
+                                <select name='status' value={this.state.status} onChange={this.handleChange} >
+                                    <option value={UserStatus.ACTIVE}>ACTIVE</option>
+                                    <option value={UserStatus.DEACTIVATED}>DEACTIVATED</option>
+                                    <option value={UserStatus.SUSPENDED}>SUSPENDED</option>
+                                </select>
+                            </>
+                            : this.props.user ? <><h4>Your status : {this.props.user?.status === 1 ? 'ACTIVE'
+                                : this.props.user?.status === 2 ? 'SUSPENDED' : 'DEACTIVATED'} </h4> </> : ''}
                     </span>
 
                     <span className='span-register'>

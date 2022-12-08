@@ -10,6 +10,10 @@ export enum UserRole {
     USER = 1, ADMIN
 }
 
+export enum UserStatus {
+    ACTIVE = 1, SUSPENDED, DEACTIVATED
+}
+
 export class User implements Identifiable<IdType> {
     constructor(
 
@@ -24,7 +28,8 @@ export class User implements Identifiable<IdType> {
         public imageUrl?: string,
         public description?: string,
         public timeCreated: string = toIsoDate(new Date()),
-        public timeEdited?: string
+        public timeEdited?: string,
+        public status: UserStatus=UserStatus.ACTIVE
 
     ) { }
 }
@@ -43,6 +48,8 @@ export class UserRegister implements Omit<User, 'id'>{
         public description?: string,
         public timeCreated: string = toIsoDate(new Date()),
         public timeEdited?: string,
+        public status: UserStatus=UserStatus.ACTIVE
+
     ) { }
 }
 

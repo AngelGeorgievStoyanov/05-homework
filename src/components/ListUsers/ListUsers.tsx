@@ -7,9 +7,9 @@ import {  UserUpdateListener } from "../shared/common-types";
 
 type UsersProps = {
     users: User[]
-    owner: User;
+    owner: User |number|undefined;
     onEditedUser:UserUpdateListener;
-    admin:2|undefined
+    admin:2|undefined|boolean
   
 }
 

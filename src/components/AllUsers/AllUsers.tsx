@@ -16,19 +16,18 @@ const AllUsers = () => {
 
 
     const [users, setUsers] = useState<User[]>([])
-    const [owner, setOwner] = useState<User | any>()
+    const [owner, setOwner] = useState<User | number | undefined>()
     const [editedUser, setEditedUser] = useState<Optional<User>>(undefined);
-    const [admin, setAdmin] = useState<2 | undefined>(undefined);
+    const [admin, setAdmin] = useState<2 | undefined | boolean>(undefined);
     const [hide, setHide] = useState(false);
     const [errors, setErrors] = useState<string | undefined>();
-
     const [mainHide, setMainHide] = useState(false)
-
-
+    const [name, setName] = useState<string>()
 
     useEffect(() => {
         API_CLIENT.findAll().then(allUsers => {
             setUsers(allUsers);
+
 
         }).catch(err => {
             console.log(err)
@@ -41,6 +40,7 @@ const AllUsers = () => {
         try {
             const edit = await API_CLIENT.update(user)
             setUsers((oldUser) => oldUser.map(us => us.id === edit.id ? edit : us))
+            mainHideF()
         } catch (err) {
             console.log(err)
             setErrors(err + '')
@@ -59,43 +59,31 @@ const AllUsers = () => {
 
                 await handleUpdateUser(user)
                 setEditedUser(undefined)
+
             } else {
 
-                if (user.firstName === '') {
-                    throw new Error('First Name is required')
-                    
-                }
-                if (user.lastName === '') {
-                    throw new Error('Last Name is required')
-                }
-                if (user.username === '') {
-                    throw new Error('Username is required')
-                }
-                if (user.password === '') {
-                    throw new Error('Password is required')
-                }
-                if (user.rePass === '') {
-                    throw new Error('Confirm Password is required')
-                }
 
-                if (user.password !== user.rePass) {
-                    throw new Error('Password and Confirm Password don\'t match')
-                }
+                await API_CLIENT.findByUsername(user.username as any)
+
 
                 const register = await API_CLIENT.register(user)
 
                 setUsers(usersOld => usersOld.concat(register))
-                setOwner(register)
+                setOwner(register.id)
+
                 setEditedUser(editedUser ? undefined : new User(0, '', '', '', '', '', undefined, undefined, '', '', '', ''))
-                setAdmin(register.role === 2 ? 2 : undefined)
+                setName(register.firstName)
+                setAdmin(register.role === 2 ? true : undefined)
                 setErrors(undefined);
+
+                mainHideF()
 
             }
         } catch (err) {
             setErrors(err + '');
             console.log(err + '');
         }
-    }, [editedUser, handleUpdateUser])
+    }, [])
 
 
 
@@ -105,13 +93,20 @@ const AllUsers = () => {
     const handleLogin = useCallback(async (username: string, password: string) => {
         try {
             const userLog = await authServices.login1(username, password)
+            setName(userLog[0].firstName)
+            console.log(name)
 
             const allUsers = await API_CLIENT.findAll()
-
-            setOwner(userLog)
             setUsers(allUsers)
+            const user = userLog.map((x: any) => { return x.id })
+            setOwner(undefined)
+            setOwner(user[0])
             mainHideF()
             setErrors(undefined)
+
+            const role = userLog.map((x: any) => { return x.role })
+
+            setAdmin(role[0] === 2 ? true : undefined)
             let userEl = document.getElementById('username') as HTMLInputElement
             userEl.value = ''
             let passEl = document.getElementById('password') as HTMLInputElement
@@ -129,8 +124,14 @@ const AllUsers = () => {
 
 
     const handleEditUser = (user: User) => {
+
         mainHideF()
+
+        if (hide === false) {
+            setHide(!hide);
+        }
         setEditedUser(user)
+
 
     }
 
@@ -144,11 +145,16 @@ const AllUsers = () => {
 
     const mainHideF = () => {
 
+
         setMainHide(!mainHide)
+
+
     }
 
     const exit = () => {
-        setEditedUser(editedUser ? undefined : new User(0, '', '', '', '', '', undefined, undefined, '', '', '', ''))
+
+        setEditedUser(undefined)
+
 
         setOwner(undefined)
         mainHideF()
@@ -160,13 +166,13 @@ const AllUsers = () => {
         <div className="div-all-users">
             {errors && <h3 className="errors">{errors}</h3>}
 
-            <article style={{ display: mainHide ? "none" : "block" }}>
 
+            <article style={{ display: mainHide ? "none" : "block" }}>
                 <div className="login" id="login" style={{ display: hide ? "none" : "block" }}>
                     <Login onLogin={handleLogin} onTogle={toggleHide} />
                 </div>
                 <div className="register" id="register" style={{ display: hide ? "block" : "none" }}>
-                    <Register key={editedUser?.id} onTogle={toggleHide} user={editedUser} onRegister={handleUserSubmit} mainHid={mainHideF} />
+                    <Register key={editedUser?.id} onTogle={toggleHide} user={editedUser} admin={admin} onRegister={handleUserSubmit} />
                 </div >
             </article>
 
@@ -174,7 +180,7 @@ const AllUsers = () => {
                 <div className="div-exit">
                     <button onClick={exit}>EXIT</button>
                 </div>
-
+                {name ? <div className="welcome"><h2 >Welcome {name} !</h2></div> : ''}
                 <div className="main">
                     <ListUsers users={users} owner={owner} admin={admin} onEditedUser={handleEditUser} />
                 </div>
