@@ -1,3 +1,4 @@
+import userEvent from "@testing-library/user-event";
 import React, { Component } from "react";
 import { User, UserGender, UserRegister, UserRole, UserStatus } from "../model/users";
 import { Optional, UserListener } from "../shared/common-types";
@@ -111,7 +112,7 @@ export default class Register extends Component<UserProps, UserRegisterState> {
         )
 
     }
-    handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
         const fieldName = event.target.name;
         this.setState({ [fieldName]: event.target.value } as unknown as UserRegisterState);
     }
@@ -121,7 +122,7 @@ export default class Register extends Component<UserProps, UserRegisterState> {
         return (
             <section className='section-form-regiser'>
                 <div className="register-div">
-                    {this.props.user ? <h3>Edit Form</h3> : <h3>Register Form</h3>}
+                    {this.props.user ? <h3>Edit Form</h3> : this.props.admin === true ? <h3>Create User Form</h3> : <h3>Register Form</h3>}
                 </div>
                 <form method="POST" onSubmit={this.registerSubmitHandler} className='form-register'>
                     <span className='span-register'>
@@ -186,13 +187,14 @@ export default class Register extends Component<UserProps, UserRegisterState> {
 
                     <span className='span-register'>
                         <label htmlFor="description">Description : </label>
-                        <textarea name="description" cols={20} rows={4} defaultValue={this.state.description} maxLength={512} ></textarea>
+                        <textarea name="description" cols={20} rows={4} maxLength={512} value={this.state.description} onChange={this.handleChange}  ></textarea>
                     </span>
                     <div className="buttons-register">
-                        {this.props.user ? <input className='button-register' type="submit" value={'EDIT PROFILE'} /> :
+                        {this.props.user ? <input className='button-register' type="submit" value={'EDIT PROFILE'} /> : this.props.admin === true ?
+                            <input className='button-register' type="submit" value={'CREATE PROFILE'} /> :
                             <input className='button-register' type="submit" value={'Sign Up'} />
                         }
-                        <button className='button-go-to-login' onClick={(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => this.props.onTogle(e)} >Already Have An Account?</button>
+                        {!this.props.user ? <button className='button-go-to-login' onClick={(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => this.props.onTogle(e)} >Already Have An Account?</button> : ''}
                     </div>
                 </form>
 

@@ -135,5 +135,134 @@ export const login1 = async (username: string, password: string) => {
 
 }
 
+export const serachInDB = async (query: string) => {
+    let resultFilter: User[] | any = []
+
+    const username = await fetch(`${apiJson}/users?username_like=${query}`)
+    let resultUserName = await username.json()
+    console.log(resultUserName)
+
+    const firstName = await fetch(`${apiJson}/users?firstName_like=${query}`)
+    let resultfirstName = await firstName.json()
+    console.log(resultfirstName)
+
+    const lastName = await fetch(`${apiJson}/users?lastName_like=${query}`)
+    const resultlastName = await lastName.json()
+    console.log(resultlastName)
+
+    if (resultUserName.length > 0 && resultfirstName.length > 0 && resultlastName.length > 0) {
 
 
+        const filterByUsernameAndFirstNamme = (resultUserName: User[], resultfirstName: User[]) => {
+            let res = [];
+            res = resultUserName.filter(el => {
+               
+                return !resultfirstName.find(element => {
+                    return element.id === el.id;
+                });
+            });
+            console.log(res)
+            return res;
+        }
+
+
+
+        const lastFilter = (arr1: User[], resultlastName: User[]) => {
+            let res = [];
+            res = arr1.filter(el => {
+                return !resultlastName.find(element => {
+                      
+                    return element.id === el.id;
+                });
+            });
+            return res;
+        }
+        const arr1 = filterByUsernameAndFirstNamme(resultUserName, resultfirstName)
+
+        const arr = lastFilter(arr1, resultlastName)
+
+        console.log(arr1,'--arr1-')
+        console.log(arr,'--arr-')
+        resultFilter = resultFilter.concat(arr)
+
+    } else if (resultUserName.length > 0 && resultfirstName.length > 0 && resultlastName.length === 0) {
+
+        const filterByUsernameAndFirstNamme = (resultUserName: User[], resultfirstName: User[]) => {
+            let res = [];
+            res = resultUserName.filter(el => {
+                return !resultfirstName.find(element => {
+                    return element.id === el.id;
+                });
+            });
+            return res;
+        }
+
+
+        const arr = filterByUsernameAndFirstNamme(resultUserName, resultfirstName)
+        resultFilter = resultFilter.concat(arr)
+
+    } else if (resultUserName.length > 0 && resultfirstName.length === 0 && resultlastName.length > 0) {
+
+        const filterByUsernameAndLastNamme = (resultUserName: User[], resultlastName: User[]) => {
+            let res = [];
+            res = resultUserName.filter(el => {
+                return !resultlastName.find(element => {
+                    return element.id === el.id;
+                });
+            });
+            console.log(res)
+            return res;
+        }
+
+
+        const arr = filterByUsernameAndLastNamme(resultUserName, resultlastName)
+        resultFilter = resultFilter.concat(arr)
+
+    } else if (resultUserName.length === 0 && resultfirstName.length > 0 && resultlastName.length > 0) {
+
+        const filterByFirstNameAndLastNamme = (resultfirstName: User[], resultlastName: User[]) => {
+            let res = [];
+            res = resultfirstName.filter(el => {
+                return !resultlastName.find(element => {
+                    return element.id === el.id;
+                });
+            });
+            return res;
+        }
+
+
+        const arr = filterByFirstNameAndLastNamme(resultlastName, resultfirstName)
+        resultFilter = resultFilter.concat(arr)
+
+
+    } else {
+        if (resultUserName.length > 0) {
+
+            resultFilter = resultFilter.concat(resultUserName)
+
+
+        } else if (resultfirstName.length > 0) {
+            resultFilter = resultFilter.concat(resultfirstName)
+
+        } else if (resultlastName.length > 0) {
+            resultFilter = resultFilter.concat(resultlastName)
+
+        } else {
+            // let notMath = 'Not match!'
+            // resultFilter.push(notMath)
+
+            throw new Error('Not match in DB')
+
+        }
+    }
+
+
+    return resultFilter
+
+
+}
+
+
+
+// localhost:3000/customer?name_like=rist&education_like=high
+// const response = await fetch(`${apiJson}/users?username_like=${query}&firstName_like=${query}`)

@@ -9,6 +9,8 @@ export interface Identifiable<K> {
     id: K;
 }
 
+
+
 export type Optional<T> = T | undefined;
 
 
@@ -24,3 +26,5 @@ export interface UserListenerLogin {
 export interface UserUpdateListener {
     (todo: User) : void;
 }
+
+

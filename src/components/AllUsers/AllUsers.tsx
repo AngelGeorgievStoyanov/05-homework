@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useState } from "react"
-import { User, UserRegister } from "../model/users"
+import React, { useCallback, useEffect, useState } from "react"
+import { User, UserRegister, UserRole, UserStatus } from "../model/users"
 import ListUsers from "../ListUsers/ListUsers"
 import { ApiClient, ApiClientImpl } from '../services/authServices'
 import * as authServices from '../services/authServices'
@@ -7,7 +7,11 @@ import { IdType, Optional } from "../shared/common-types"
 import './AllUsers.css'
 import Register from "../Register/Register"
 import Login from "../Login/Login"
+import { UserFilter } from "../UserFilter/UserFilter"
 
+export type FilterType = UserStatus | UserRole | undefined;
+
+export type FilterChangeListener = (filterChange: FilterType) => void;
 
 
 const API_CLIENT: ApiClient<IdType, User> = new ApiClientImpl<IdType, User>('users');
@@ -23,6 +27,8 @@ const AllUsers = () => {
     const [errors, setErrors] = useState<string | undefined>();
     const [mainHide, setMainHide] = useState(false)
     const [name, setName] = useState<string>()
+    const [filterStatus, setFilterStatus] = useState<FilterType>()
+    const [filterRole, setFilterRole] = useState<FilterType>()
 
     useEffect(() => {
         API_CLIENT.findAll().then(allUsers => {
@@ -63,7 +69,7 @@ const AllUsers = () => {
             } else {
 
 
-                await API_CLIENT.findByUsername(user.username as any)
+                await API_CLIENT.findByUsername(user.username)
 
 
                 const register = await API_CLIENT.register(user)
@@ -94,7 +100,7 @@ const AllUsers = () => {
         try {
             const userLog = await authServices.login1(username, password)
             setName(userLog[0].firstName)
-            console.log(name)
+
 
             const allUsers = await API_CLIENT.findAll()
             setUsers(allUsers)
@@ -155,10 +161,61 @@ const AllUsers = () => {
 
         setEditedUser(undefined)
 
-
+        setAdmin(undefined)
         setOwner(undefined)
         mainHideF()
 
+    }
+
+    const handleDeleteUser = async (user: User) => {
+        try {
+
+            await API_CLIENT.deleteById(user.id)
+            setUsers(oldUsers => oldUsers.filter(us => us.id !== user.id))
+            setErrors(undefined)
+        } catch (err) {
+            setErrors(err + '')
+        }
+    }
+
+    const createUser = () => {
+        mainHideF()
+        console.log(hide)
+        if (hide === false) {
+
+            setHide(!hide)
+        }
+    }
+
+    const serachUsers = async (event: React.MouseEvent) => {
+        event.preventDefault()
+        const serach = document.getElementById('find-users') as HTMLInputElement
+        console.log(serach.value)
+        try {
+
+            const searchUsers = await authServices.serachInDB(serach.value)
+            console.log(searchUsers)
+            if (searchUsers.length > 0) {
+                setUsers(searchUsers)
+                setErrors(undefined)
+            } else if (!serach.value) {
+                console.log('ppp')
+                setErrors(undefined)
+
+            }
+        } catch (err) {
+            setErrors(err + '')
+        }
+    }
+
+    const handleFilterChangeStatus = (filterStatus: FilterType) => {
+        setFilterStatus(filterStatus)
+       
+
+    }
+
+    const handleFilterChangeRole = (filterRole: FilterType) => {
+        setFilterRole(filterRole)
     }
 
 
@@ -179,10 +236,16 @@ const AllUsers = () => {
             <main className="main" style={{ display: mainHide ? "block" : "none" }}>
                 <div className="div-exit">
                     <button onClick={exit}>EXIT</button>
+                    <button onClick={createUser}>Create new USER</button>
+                    <div >
+                        <input id="find-users" type="text" />
+                        <button onClick={serachUsers}>FIND USERS</button>
+                    </div>
+                    <UserFilter filterStatus={filterStatus} filterRole={filterRole} onFilterChangeStatus={handleFilterChangeStatus} onFilterChangeRole={handleFilterChangeRole} />
                 </div>
                 {name ? <div className="welcome"><h2 >Welcome {name} !</h2></div> : ''}
                 <div className="main">
-                    <ListUsers users={users} owner={owner} admin={admin} onEditedUser={handleEditUser} />
+                    <ListUsers users={users} owner={owner} admin={admin} onEditedUser={handleEditUser} onDeleteUser={handleDeleteUser} filterStatus={filterStatus} filterRole={filterRole} />
                 </div>
 
             </main>
